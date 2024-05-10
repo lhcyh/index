@@ -1,4 +1,4 @@
-package com.chxckc.chslearn.example;
+package com.lhcyh.qwclq.example;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -45,17 +45,31 @@ public class Example<Model> {
         return m;
     }
 
-    private Boolean isLeftJoinProperty(Object model,Field field){
-        //获取包名
-        String modelPackage=model.getClass().getPackage().getName();
-        modelPackage=modelPackage.substring(0,modelPackage.lastIndexOf('.'));
-        String fieldPackage=field.getType().getPackage().getName();
-        fieldPackage=fieldPackage.substring(0,fieldPackage.lastIndexOf('.'));
-        if(modelPackage.equals(fieldPackage)){
-            return true;
-        }else {
+    private Boolean isLeftJoinProperty(Field field){
+//        if(model instanceof Enum){
+//            return false;
+//        }
+
+        if(field.getType().isEnum()){
             return false;
         }
+
+        if(field.getType().getClassLoader()==null){
+            return false;
+        }else {
+            return true;
+        }
+
+        // 获取包名
+//        String modelPackage=model.getClass().getPackage().getName();
+//        modelPackage=modelPackage.substring(0,modelPackage.lastIndexOf('.'));
+//        String fieldPackage=field.getType().getPackage().getName();
+//        fieldPackage=fieldPackage.substring(0,fieldPackage.lastIndexOf('.'));
+//        if(modelPackage.equals(fieldPackage)){
+//            return true;
+//        }else {
+//            return false;
+//        }
     }
 
     private String getUnderLineString(String string){
@@ -128,7 +142,7 @@ public class Example<Model> {
                 continue;
             }
 
-            if(isLeftJoinProperty(model1,field)){
+            if(isLeftJoinProperty(field)){
                 loadCriterion(value1,value2,condition,valueType,order);
                 leftJoinList.add(getUnderLineString(getInitialClass(field.getType()).getSimpleName()));
             }else {
@@ -197,7 +211,7 @@ public class Example<Model> {
     }
 
     public Example<Model> andLike(Model model){
-        loadCriterion(model,null,Criterion.Condition.Like,Criterion.ValueType.SingleValue,null);
+        loadCriterion(model,null, Criterion.Condition.Like, Criterion.ValueType.SingleValue,null);
         return this;
     }
 
